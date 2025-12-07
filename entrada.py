@@ -1,28 +1,52 @@
 from collections import defaultdict
 
-def ler_estados():
-  print("Informe os estados do Automato (separe por virgula):")
-  entrada = input().strip()
-  estados = set()
-  
-  for item in entrada.split(","):
-    estados.add(int(item.strip()))
+def ler_estados(tipo):
+  limites = {
+    "AFe": 5,
+    "AFN": 4
+  }
 
-  return estados
+  limite = limites[tipo]
+  
+  while True:
+    print(f"Informe os estados do Automato (separe por virgula, no maximo {limite} estados):")
+    entrada = input().strip()
+    estados = set()
+    
+    for item in entrada.split(","):
+      estados.add(int(item.strip()))
+
+    if len(estados) > limite:
+      print(f"No maximo {limite} estados")
+      continue
+    
+    return estados
+
 
 def ler_estado_inicial(estados):
+  print(f"DEBUG - Estados disponiveis {estados}")
+  print(f"Tipo do estado {type(estados)[0]}")
+  
   while True:
     print("Informe o estado inicial:")
     estado_inicial = int(input().strip())
+    
     if estado_inicial in estados:
-      print("Erro: o estado informado nao se encontra na lista de estados")
+      return estado_inicial
+    
+    print("Erro: o estado informado nao se encontra na lista de estados")
 
-def ler_transicoes(com_epsilon=False):
+
+def ler_transicoes(tipo):
+  limites = {
+    "AFe": 7,
+    "AFN": 8
+  }
+
+  limite = limites[tipo]
+
   transicoes = defaultdict(list)
-  print("Informe as transicoes, ex: 0a1, 1a2")
-
-  if com_epsilon:
-    print("use 'e' para transicoes epsilon")
+  print(f"Informe as transicoes, ex: 0a1, 1a2. No maximo {limite} transicoes")
 
   while True:
     entrada = input().strip()
@@ -42,6 +66,10 @@ def ler_transicoes(com_epsilon=False):
 
       transicoes[(origem, simbolo)].append(destino)
 
+      if len(transicoes) > limite:
+        print(f"No maximo {limite} transicoes")
+        continue
+
     except (ValueError, IndexError):
       print("Erro ao processar '{entrada}'")
 
@@ -52,6 +80,9 @@ def separar_alfabeto(transicoes):
 
   for (_, simbolo) in transicoes.keys():
     alfabeto.add(simbolo)
+
+  if len(alfabeto) > 3:
+    print("No maximo 3 simbolos")
 
   return alfabeto
 

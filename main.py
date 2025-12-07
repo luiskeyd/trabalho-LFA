@@ -1,37 +1,56 @@
-print("Informe os estados do Autômato:")
-entrada = input()
+from automato import AFN, AFe
+from entrada import (ler_estados, ler_estado_inicial, ler_transicoes, ler_estados_finais, separar_alfabeto)
+from conversores import afe_para_afn, afn_para_afd
+from desenho import desenhar_automato
 
-lista_estados = []
+def criar_automato(tipo):
+  print(f"Criando {tipo}")
 
-for item in entrada.split(","):
-    item = item.strip()
-    lista_estados.append(int(item))
+  estados = ler_estados(tipo)
+  estado_inicial = ler_estado_inicial(estados)
+  transicoes = ler_transicoes(tipo)
+  alfabeto = separar_alfabeto(transicoes)
+  estados_finais = ler_estados_finais(estados)
 
-print("Informe o estado inicial:")
-estado_inicial = int(input)
+  if tipo == "AFe":
+    return AFe(estados, alfabeto, transicoes, estado_inicial, estados_finais)
+  elif tipo == "AFN":
+    return AFN(estados, alfabeto, transicoes, estado_inicial, estados_finais)
+  else:
+    print("Informe um AFN ou um AFe pra conversão")
 
-if estado_inicial not in lista_estados:
-    print("O estado informado não é um estado do autômato")
+def main():
+  while True:
+    print("Digite 1 para criar um AFe e 2 para criar um AFN, 3 para sair")
 
-lista_estados.sort()
+    opcao = input()
 
-print("Informe a função programa:")
+    if opcao == '1':
+      afe = criar_automato("AFe")
+      print("AFe original")
+      print(afe)
 
-lista_transicoes = []
+      afn = afe_para_afn(afe)
+      print("AFN resultante")
+      print(afn)
+      desenhar_automato(afn.estados, afn.estado_inicial, afn.estados_finais, afn.transicoes)
 
-while True:
-    entrada = input()
-    if not entrada:
-        break
-    lista_transicoes.append(entrada)
+    elif opcao == '2':
+      afn = criar_automato("AFN")
+      print("AFN original")
+      print(afn)
 
-print("Informe os estados finais:")
-entrada = input()
+      afd = afn_para_afd(afn)
+      print("AFD resultante")
+      print(afd)
+      desenhar_automato(afd.estados, afd.estado_inicial, afd.estados_finais, afd.transicoes)
 
-lista_estados_finais = []
+    elif opcao == '3':
+      print("Vamo encerrar por aqui")
+      break
 
-for item in entrada.split(","):
-    item = item.strip()
-    lista_estados_finais.append(int(item))
+    else:
+      print("Invalido, tenta outra coisa")
 
-lista_estados_finais.sort()
+if __name__ == "__main__":
+  main()
